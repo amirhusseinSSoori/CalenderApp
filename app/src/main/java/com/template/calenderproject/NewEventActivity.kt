@@ -47,26 +47,7 @@ import java.util.*
 class NewEventActivity : AppCompatActivity() {
     private val TAG = this.javaClass.simpleName
     private val MAPS_ACTIVITY_REQUEST = 1
-//    private var toolbar: Toolbar? = null
 
-   // private var eventTitleTextInputLayout: TextInputLayout? = null
-  //  private var allDayEventSwitch: Switch? = null
-   // private var setDateLinearLayout: LinearLayout? = null
-   // private var setDateTextView: TextView? = null
-    //private var setTimeLinearLayout: LinearLayout? = null
-   // private var setTimeTextView: TextView? = null
-   // private var setDurationButton: Button? = null
-   // private var notificationsRecyclerView: RecyclerView? = null
-   // private var addNotificationTextView: TextView? = null
-   // private var repeatTextView: TextView? = null
-   // private var eventNoteTextInputLayout: TextInputLayout? = null
-   // private var pickNoteColorTextView: TextView? = null
-  //  private var eventLocationTextInputLayout: TextInputLayout? = null
-   // private var locationImageButton: ImageButton? = null
-  //  private var phoneNumberTextInputLayout: TextInputLayout? = null
-//    private var mailTextInputLayout: TextInputLayout? = null
-  //  private var mailTextInputEditText: TextInputEditText? = null
-//    private var mailSwitch: Switch? = null
     private var mLocationPermissionGranted = false
     private var notificationAlertDialog: AlertDialog? = null
     private var repetitionAlertDialog: AlertDialog? = null
@@ -101,14 +82,18 @@ class NewEventActivity : AppCompatActivity() {
     @SuppressLint("ResourceType")
     private fun initViews() {
         val intent = intent
-        binding.AddNewEventActivityTexViewSetDate!!.text = intent.getStringExtra("date")
+        binding.AddNewEventActivityTexViewSetDate.text = intent.getStringExtra("date")
         val calendar = Calendar.getInstance()
         calendar.timeZone = TimeZone.getDefault()
-        binding.AddNewEventActivityTexViewSetTime!!.text = SimpleDateFormat("K:mm a", Locale.ENGLISH).format(calendar.time)
+        binding.AddNewEventActivityTexViewSetTime.text = SimpleDateFormat("K:mm a", Locale.ENGLISH).format(calendar.time)
+
         val bgShape = binding.AddNewEventActivityTextViewPickNoteColor!!.background as GradientDrawable
         bgShape.setColor(resources.getInteger(R.color.red))
+
+
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         binding.AddNewEventActivityTextViewRepeat!!.text = sharedPreferences.getString("frequency", "Repeat One-Time")
+
         notifications!!.add(
             Notification(
                 null,null,null,
@@ -134,13 +119,13 @@ class NewEventActivity : AppCompatActivity() {
         alarmYear = mCal[Calendar.YEAR]
         alarmMonth = mCal[Calendar.MONTH]
         alarmDay = mCal[Calendar.DAY_OF_MONTH]
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            mLocationPermissionGranted = true
-        }
+//        if (ContextCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) == PackageManager.PERMISSION_GRANTED
+//        ) {
+//            mLocationPermissionGranted = true
+//        }
     }
 
     private fun createAlertDialogs() {
@@ -185,38 +170,21 @@ class NewEventActivity : AppCompatActivity() {
     private fun defineListeners() {
         binding.AddNewEventActivitySwitchAllDayEvent!!.setOnCheckedChangeListener { compoundButton, isChecked ->
             if (isChecked) {
-                binding.AddNewEventActivityLinearLayoutSetTime!!.visibility = View.GONE
+                binding.AddNewEventActivityFrameSetTime!!.visibility = View.GONE
             } else {
-                binding.AddNewEventActivityLinearLayoutSetTime!!.visibility = View.VISIBLE
+                binding.AddNewEventActivityFrameSetTime!!.visibility = View.VISIBLE
             }
         }
-        binding.AddNewEventActivityLinearLayoutSetDate!!.setOnClickListener { view -> setDate(view) }
-        binding.AddNewEventActivityLinearLayoutSetTime!!.setOnClickListener { view -> setTime(view) }
+        binding.AddNewEventActivityFrameSetDate!!.setOnClickListener { view -> setDate(view) }
+        binding.AddNewEventActivityFrameSetTime!!.setOnClickListener { view -> setTime(view) }
         binding.AddNewEventActivityButtonDuration!!.setOnClickListener { view -> setDuration(view) }
         binding.AddNewEventActivityTextViewAddNotification!!.setOnClickListener { notificationAlertDialog!!.show() }
         binding.AddNewEventActivityTextViewRepeat!!.setOnClickListener { repetitionAlertDialog!!.show() }
         binding.AddNewEventActivityTextViewPickNoteColor!!.setOnClickListener { view -> pickNoteColor(view) }
 
-//        locationImageButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!mLocationPermissionGranted) {
-//                    getLocationPermission();
-//                } else {
-//                    startActivityForResult(new Intent(getApplicationContext(), MapsActivity.class), MAPS_ACTIVITY_REQUEST);
-//                }
-//            }
-//        });
-        binding.AddNewEventActivitySwitchMail!!.setOnCheckedChangeListener { compoundButton, isChecked ->
-            if (isChecked) {
-                binding.AddNewEventActivityTextInputEditTextMail!!.isEnabled = true
-                binding.AddNewEventActivityTextInputLayoutMail!!.isEnabled = true
-            } else {
-                binding.AddNewEventActivityTextInputEditTextMail!!.setText("")
-                binding.AddNewEventActivityTextInputEditTextMail!!.isEnabled = false
-                binding.AddNewEventActivityTextInputLayoutMail!!.isEnabled = false
-            }
-        }
+
+
+
     }
 
     private fun setDuration(view: View) {
@@ -404,9 +372,9 @@ class NewEventActivity : AppCompatActivity() {
             } else {
                 event!!.color= notColor
             }
-            event!!.location= binding.AddNewEventActivityTextInputLayoutLocation!!.editText!!.text.toString().trim { it <= ' ' }
+//            event!!.location= binding.AddNewEventActivityTextInputLayoutLocation!!.editText!!.text.toString().trim { it <= ' ' }
             event!!.phoneNumber=binding.AddNewEventActivityTextInputLayoutPhoneNumber!!.editText!!.text.toString().trim { it <= ' ' }
-            event!!.mail = binding.AddNewEventActivityTextInputLayoutMail!!.editText!!.text.toString().trim { it <= ' ' }
+          //  event!!.mail = binding.AddNewEventActivityTextInputLayoutMail!!.editText!!.text.toString().trim { it <= ' ' }
         }
 
     private fun isRecurring(toString: String): Boolean {
@@ -533,34 +501,8 @@ class NewEventActivity : AppCompatActivity() {
         return sharedPreferences.getString(key, "Indigo")
     }
 
-    private val locationPermission: Unit
-        private get() {
-            mLocationPermissionGranted = false
-            if (ContextCompat.checkSelfPermission(
-                    this.applicationContext,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                mLocationPermissionGranted = true
-            } else {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
-                )
-            }
-        }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == MAPS_ACTIVITY_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                binding.AddNewEventActivityTextInputLayoutLocation!!.editText!!.setText(data!!.getStringExtra("address"))
-            }
-        }
-    }
 
-    companion object {
-        private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
-    }
+
+
 }

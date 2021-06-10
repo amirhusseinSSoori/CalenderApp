@@ -16,7 +16,7 @@ public class DBQueries {
                     + DBTables.EVENT_NOTE + " TEXT,"
                     + DBTables.EVENT_COLOR + " INTEGER,"
                     + DBTables.EVENT_PHONE_NUMBER + " TEXT,"
-                    + DBTables.EVENT_MAIL + " TEXT,"
+//                    + DBTables.EVENT_MAIL + " TEXT,"
                     + DBTables.EVENT_PARENT_ID + " TEXT)";
 
     public static final String CREATE_RECURRING_PATTERN_TABLE =

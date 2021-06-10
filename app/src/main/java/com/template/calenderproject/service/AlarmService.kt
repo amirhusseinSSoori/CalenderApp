@@ -86,7 +86,7 @@ class AlarmService :Service() {
             mChannel.setShowBadge(true)
             mNotifyManager?.createNotificationChannel(mChannel)
             notificationBuilder
-                .setSmallIcon(R.drawable.ic_mail)
+                .setSmallIcon(R.drawable.ic_settings)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setVibrate(vibratePattern)
@@ -99,7 +99,7 @@ class AlarmService :Service() {
                 .setContentIntent(pendingIntent)
         } else {
             notificationBuilder.setContentTitle(eventTitle)
-                .setSmallIcon(R.drawable.ic_mail)
+                .setSmallIcon(R.drawable.ic_settings)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_VIBRATE or Notification.DEFAULT_SOUND)

@@ -29,6 +29,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.template.calenderproject.adabter.NotificationAdapter
 import com.template.calenderproject.database.DBHelper
 import com.template.calenderproject.database.DBTables
+import com.template.calenderproject.databinding.ActivityNewEventBinding
 import com.template.calenderproject.model.Event
 import com.template.calenderproject.model.Notification
 import com.template.calenderproject.service.ServiceAutoLauncher
@@ -41,26 +42,7 @@ import java.util.*
 class EditEventActivity : AppCompatActivity() {
     private val TAG = this.javaClass.simpleName
     private val MAPS_ACTIVITY_REQUEST = 1
-    private var toolbar: Toolbar? = null
-    private var progressBar: ProgressBar? = null
-    private var eventTitleTextInputLayout: TextInputLayout? = null
-    private var allDayEventSwitch: Switch? = null
-    private var setDateLinearLayout: LinearLayout? = null
-    private var setDateTextView: TextView? = null
-    private var setTimeLinearLayout: LinearLayout? = null
-    private var setTimeTextView: TextView? = null
-    private var setDurationButton: Button? = null
-    private var notificationsRecyclerView: RecyclerView? = null
-    private var addNotificationTextView: TextView? = null
-    private var repeatTextView: TextView? = null
-    private var eventNoteTextInputLayout: TextInputLayout? = null
-    private var pickNoteColorTextView: TextView? = null
-  //  private var eventLocationTextInputLayout: TextInputLayout? = null
-    private var locationImageButton: ImageButton? = null
-    private var phoneNumberTextInputLayout: TextInputLayout? = null
-    private var mailTextInputLayout: TextInputLayout? = null
-    private var mailTextInputEditText: TextInputEditText? = null
-    private var mailSwitch: Switch? = null
+
     private var notificationAlertDialog: AlertDialog? = null
     private var repetitionAlertDialog: AlertDialog? = null
     private var alarmYear = 0
@@ -72,58 +54,23 @@ class EditEventActivity : AppCompatActivity() {
     private var notColor = 0
     private var dbHelper: DBHelper? = null
     private var currentNotifications: MutableList<Notification>? = null
-    private val eventNotifications: List<Notification>? = null
     private var oldEventId = 0
     private var notificationAdapter: NotificationAdapter? = null
     private var mEvent: Event? = null
+    lateinit var binding:ActivityNewEventBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(appTheme)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new_event)
+        binding= ActivityNewEventBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         dbHelper = DBHelper(this)
-        defineViews()
         initViews()
         initVariables()
         createAlertDialogs()
         defineListeners()
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.AddNewEventActivityToolbar)
     }
 
-    private fun defineViews() {
-        eventTitleTextInputLayout =
-            findViewById<View>(R.id.AddNewEventActivity_TextInputLayout_EventTitle) as TextInputLayout
-        allDayEventSwitch =
-            findViewById<View>(R.id.AddNewEventActivity_Switch_AllDayEvent) as Switch
-        setDateLinearLayout =
-            findViewById<View>(R.id.AddNewEventActivity_LinearLayout_SetDate) as LinearLayout
-        setDateTextView = findViewById<View>(R.id.AddNewEventActivity_TexView_SetDate) as TextView
-        setTimeLinearLayout =
-            findViewById<View>(R.id.AddNewEventActivity_LinearLayout_SetTime) as LinearLayout
-        setTimeTextView = findViewById<View>(R.id.AddNewEventActivity_TexView_SetTime) as TextView
-        setDurationButton = findViewById<View>(R.id.AddNewEventActivity_Button_Duration) as Button
-        notificationsRecyclerView =
-            findViewById<View>(R.id.AddNewEventActivity_RecyclerView_Notifications) as RecyclerView
-        repeatTextView = findViewById<View>(R.id.AddNewEventActivity_TextView_Repeat) as TextView
-        addNotificationTextView =
-            findViewById<View>(R.id.AddNewEventActivity_TextView_Add_Notification) as TextView
-        eventNoteTextInputLayout =
-            findViewById<View>(R.id.AddNewEventActivity_TextInputLayout_Note) as TextInputLayout
-        pickNoteColorTextView =
-            findViewById<View>(R.id.AddNewEventActivity_TextView_PickNoteColor) as TextView
-//        eventLocationTextInputLayout =
-//            findViewById<View>(R.id.AddNewEventActivity_TextInputLayout_Location) as TextInputLayout
-        locationImageButton =
-            findViewById<View>(R.id.AddNewEventActivity_ImageButton_Location) as ImageButton
-        phoneNumberTextInputLayout =
-            findViewById<View>(R.id.AddNewEventActivity_TextInputLayout_PhoneNumber) as TextInputLayout
-        mailTextInputLayout =
-            findViewById<View>(R.id.AddNewEventActivity_TextInputLayout_Mail) as TextInputLayout
-        mailTextInputEditText =
-            findViewById<View>(R.id.AddNewEventActivity_TextInputEditText_Mail) as TextInputEditText
-        mailSwitch = findViewById<View>(R.id.AddNewEventActivity_Switch_Mail) as Switch
-        progressBar = findViewById<View>(R.id.AddNewEventActivity_ProgressBar) as ProgressBar
-        toolbar = findViewById<View>(R.id.AddNewEventActivity_Toolbar) as Toolbar
-    }
 
     @SuppressLint("ResourceType")
     private fun initViews() {
@@ -131,45 +78,34 @@ class EditEventActivity : AppCompatActivity() {
         val eventId = intent.getIntExtra("eventId", 0)
         mEvent = readEvent(eventId)
         oldEventId = mEvent!!.id!!
-        eventTitleTextInputLayout!!.editText!!.setText(mEvent!!.title)
-        setDateTextView!!.text = intent.getStringExtra("eventDate")
-        if (mEvent!!.isAllDay!!) {
-            allDayEventSwitch!!.isChecked = true
-            setTimeLinearLayout!!.visibility = View.GONE
-        } else {
-            allDayEventSwitch!!.isChecked = false
-            setTimeTextView!!.setText(mEvent!!.time)
-        }
-        setDurationButton!!.setText(mEvent!!.duration)
+        binding.AddNewEventActivityTextInputLayoutEventTitle!!.editText!!.setText(mEvent!!.title)
 
-//        eventNotifications = readNotifications(mEvent.getId());
-//        cancelAlarms(eventNotifications);
+        binding.AddNewEventActivityTexViewSetDate.text = intent.getStringExtra("eventDate")
+        if (mEvent!!.isAllDay!!) {
+            binding.AddNewEventActivitySwitchAllDayEvent.isChecked = true
+//            AddNewEventActivity_Imgte_SetDate
+            binding.AddNewEventActivityFrameSetTime.visibility = View.GONE
+        } else {
+            binding.AddNewEventActivitySwitchAllDayEvent.isChecked = false
+            binding.AddNewEventActivityTexViewSetTime.setText(mEvent!!.time)
+        }
+        binding.AddNewEventActivityButtonDuration.text = mEvent!!.duration
+
         currentNotifications = ArrayList(readNotifications(mEvent!!.id!!))
         setUpRecyclerView()
-        repeatTextView!!.setText(mEvent!!.recurringPeriod)
-        eventNoteTextInputLayout!!.editText!!.setText(mEvent!!.note)
-        val bgShape = pickNoteColorTextView!!.background as GradientDrawable
+        binding.AddNewEventActivityTextViewRepeat.setText(mEvent!!.recurringPeriod)
+        binding.AddNewEventActivityTextInputLayoutNote.editText!!.setText(mEvent!!.note)
+        val bgShape = binding.AddNewEventActivityTextViewPickNoteColor.background as GradientDrawable
         bgShape.setColor(mEvent!!.color!!)
-//        eventLocationTextInputLayout!!.editText!!.setText(mEvent!!.location)
-        phoneNumberTextInputLayout!!.editText!!.setText(mEvent!!.phoneNumber)
-        if (mEvent!!.mail == null || "".equals(mEvent!!.mail) ) {
-            mailSwitch!!.isChecked = false
-            mailTextInputEditText!!.setText("")
-            mailTextInputEditText!!.isEnabled = false
-            mailTextInputLayout!!.isEnabled = false
-        } else {
-            mailSwitch!!.isChecked = true
-            mailTextInputEditText!!.isEnabled = true
-            mailTextInputLayout!!.isEnabled = true
-            mailTextInputLayout!!.editText!!.setText(mEvent!!.mail)
-        }
+        binding.AddNewEventActivityTextInputLayoutPhoneNumber.editText!!.setText(mEvent!!.phoneNumber)
+
     }
 
     private fun initVariables() {
         val mCal = Calendar.getInstance()
         mCal.timeZone = TimeZone.getDefault()
         try {
-            mCal.time = Utils.eventDateFormat.parse(setDateTextView!!.text.toString())
+            mCal.time = Utils.eventDateFormat.parse( binding.AddNewEventActivityTexViewSetDate.text.toString())
             alarmYear = mCal[Calendar.YEAR]
             alarmMonth = mCal[Calendar.MONTH]
             alarmDay = mCal[Calendar.DAY_OF_MONTH]
@@ -217,7 +153,7 @@ class EditEventActivity : AppCompatActivity() {
         val eventRepetitionRadioGroup =
             eventRepetitionDialogView.findViewById<View>(R.id.AlertDialogLayout_RadioGroup) as RadioGroup
         eventRepetitionRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-            repeatTextView!!.text =
+            binding.AddNewEventActivityTextViewRepeat.text =
                 "Repeat " + (eventRepetitionDialogView.findViewById<View>(checkedId) as RadioButton).text.toString()
             repetitionAlertDialog!!.dismiss()
         }
@@ -227,29 +163,20 @@ class EditEventActivity : AppCompatActivity() {
     }
 
     private fun defineListeners() {
-        allDayEventSwitch!!.setOnCheckedChangeListener { compoundButton, isChecked ->
+        binding.AddNewEventActivitySwitchAllDayEvent.setOnCheckedChangeListener { compoundButton, isChecked ->
             if (isChecked) {
-                setTimeLinearLayout!!.visibility = View.GONE
+                binding.AddNewEventActivityFrameSetTime.visibility = View.GONE
             } else {
-                setTimeLinearLayout!!.visibility = View.VISIBLE
+                binding.AddNewEventActivityFrameSetTime.visibility = View.VISIBLE
             }
         }
-        setDateLinearLayout!!.setOnClickListener { view -> setDate(view) }
-        setTimeLinearLayout!!.setOnClickListener { view -> setTime(view) }
-        setDurationButton!!.setOnClickListener { view -> setDuration(view) }
-        addNotificationTextView!!.setOnClickListener { notificationAlertDialog!!.show() }
-        repeatTextView!!.setOnClickListener { repetitionAlertDialog!!.show() }
-        pickNoteColorTextView!!.setOnClickListener { view -> pickNoteColor(view) }
-        mailSwitch!!.setOnCheckedChangeListener { compoundButton, isChecked ->
-            if (isChecked) {
-                mailTextInputEditText!!.isEnabled = true
-                mailTextInputLayout!!.isEnabled = true
-            } else {
-                mailTextInputEditText!!.setText("")
-                mailTextInputEditText!!.isEnabled = false
-                mailTextInputLayout!!.isEnabled = false
-            }
-        }
+        binding.AddNewEventActivityFrameSetDate.setOnClickListener { view -> setDate(view) }
+        binding.AddNewEventActivityFrameSetTime.setOnClickListener { view -> setTime(view) }
+        binding.AddNewEventActivityButtonDuration.setOnClickListener { view -> setDuration(view) }
+        binding.AddNewEventActivityTextViewAddNotification.setOnClickListener { notificationAlertDialog!!.show() }
+        binding.AddNewEventActivityTextViewRepeat.setOnClickListener { repetitionAlertDialog!!.show() }
+        binding.AddNewEventActivityTextViewPickNoteColor.setOnClickListener { view -> pickNoteColor(view) }
+
     }
 
     private fun readEvent(eventId: Int): Event {
@@ -280,7 +207,7 @@ class EditEventActivity : AppCompatActivity() {
         val calendar = Calendar.getInstance()
         val timePickerDialog = TimePickerDialog(this, R.style.DurationPickerTheme,
             { view, hourOfDay, minute ->
-                setDurationButton!!.text =
+                binding.AddNewEventActivityButtonDuration.text =
                     "DURATION: " + Integer.toString(hourOfDay) + " HOURS " + Integer.toString(minute) + " MINUTES"
             }, 0, 0, true
         )
@@ -302,7 +229,7 @@ class EditEventActivity : AppCompatActivity() {
                 val eventTime = simpleDateFormat.format(aCal.time)
                 alarmHour = hourOfDay
                 alarmMinute = minute
-                setTimeTextView!!.text = eventTime
+                binding.AddNewEventActivityTexViewSetTime.text = eventTime
             }, hour, minute, false
         )
         timePickerDialog.show()
@@ -325,7 +252,7 @@ class EditEventActivity : AppCompatActivity() {
                 alarmYear = year
                 alarmMonth = month
                 alarmDay = dayOfMonth
-                setDateTextView!!.text = eventTime
+                binding.AddNewEventActivityTexViewSetDate.text = eventTime
             }, year, month, day
         )
         datePickerDialog.show()
@@ -341,7 +268,7 @@ class EditEventActivity : AppCompatActivity() {
             .setOnChooseColorListener(object : OnChooseColorListener {
                 override fun onChooseColor(position: Int, color: Int) {
                     notColor = color
-                    val bgShape = pickNoteColorTextView!!.background as GradientDrawable
+                    val bgShape = binding.AddNewEventActivityTextViewPickNoteColor.background as GradientDrawable
                     bgShape.setColor(color)
                 }
 
@@ -350,12 +277,12 @@ class EditEventActivity : AppCompatActivity() {
     }
 
     private fun setUpRecyclerView() {
-        notificationsRecyclerView!!.setHasFixedSize(true)
+        binding.AddNewEventActivityRecyclerViewNotifications.setHasFixedSize(true)
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
         layoutManager.isMeasurementCacheEnabled = false
-        notificationsRecyclerView!!.layoutManager = layoutManager
+        binding.AddNewEventActivityRecyclerViewNotifications.layoutManager = layoutManager
         notificationAdapter = NotificationAdapter(this, currentNotifications!!)
-        notificationsRecyclerView!!.adapter = notificationAdapter
+        binding.AddNewEventActivityRecyclerViewNotifications.adapter = notificationAdapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -372,7 +299,7 @@ class EditEventActivity : AppCompatActivity() {
                         .setTitle("Editing a Recurring Event")
                         .setMessage("Are you sure you want to edit this recurring event? All occurrences of this event will also be edited.")
                         .setPositiveButton(
-                            android.R.string.yes
+                           "yes"
                         ) { dialog, which ->
                             viewValues
                             UpdateAsyncTask().execute()
@@ -450,7 +377,7 @@ class EditEventActivity : AppCompatActivity() {
     private val interval: String
         private get() {
             var interval = getString(R.string.one_time)
-            val repeatingPeriod = repeatTextView!!.text.toString()
+            val repeatingPeriod =  binding.AddNewEventActivityTextViewRepeat.text.toString()
             if (repeatingPeriod == getString(R.string.daily)) {
                 interval = getString(R.string.daily)
             } else if (repeatingPeriod == getString(R.string.weekly)) {
@@ -468,31 +395,29 @@ class EditEventActivity : AppCompatActivity() {
         private get() {
             var aDate: Date? = null
             try {
-                aDate = Utils.eventDateFormat.parse(setDateTextView!!.text as String)
+                aDate = Utils.eventDateFormat.parse( binding.AddNewEventActivityTexViewSetDate.text as String)
             } catch (e: ParseException) {
                 e.printStackTrace()
                 Log.e(TAG, "An error has occurred while parsing the date string")
             }
-            mEvent!!.title= eventTitleTextInputLayout!!.editText!!.text.toString().trim { it <= ' ' }
-            mEvent!!.isAllDay=allDayEventSwitch!!.isChecked
-            mEvent!!.date=Utils.eventDateFormat.format(aDate)
-            mEvent!!.month=Utils.monthFormat.format(aDate)
-            mEvent!!.year=Utils.yearFormat.format(aDate)
-            mEvent!!.time=setTimeTextView!!.text.toString()
-            mEvent!!.duration=setDurationButton!!.text.toString()
-            mEvent!!.isNotify=!notificationAdapter!!.getNotifications().isEmpty()
-            mEvent!!.isRecurring=isRecurring(repeatTextView!!.text.toString())
-            mEvent!!.recurringPeriod=repeatTextView!!.text.toString()
-            mEvent!!.note=eventNoteTextInputLayout!!.editText!!.text.toString().trim { it <= ' ' }
+            mEvent!!.title= binding.AddNewEventActivityTextInputLayoutEventTitle.editText!!.text.toString().trim { it <= ' ' }
+            mEvent!!.isAllDay=  binding.AddNewEventActivitySwitchAllDayEvent.isChecked
+            mEvent!!.date = Utils.eventDateFormat.format(aDate)
+            mEvent!!.month = Utils.monthFormat.format(aDate)
+            mEvent!!.year = Utils.yearFormat.format(aDate)
+            mEvent!!.time = binding.AddNewEventActivityTexViewSetTime.text.toString()
+            mEvent!!.duration =  binding.AddNewEventActivityButtonDuration.text.toString()
+            mEvent!!.isNotify =!notificationAdapter!!.getNotifications().isEmpty()
+            mEvent!!.isRecurring = isRecurring( binding.AddNewEventActivityTextViewRepeat.text.toString())
+            mEvent!!.recurringPeriod = binding.AddNewEventActivityTextViewRepeat.text.toString()
+            mEvent!!.note = binding.AddNewEventActivityTextInputLayoutNote.editText!!.text.toString().trim { it <= ' ' }
             if (notColor == 0) {
                 notColor = resources.getInteger(R.color.red)
             } else {
                 mEvent!!.color=notColor
             }
-//            mEvent!!.location=
-//                eventLocationTextInputLayout!!.editText!!.text.toString().trim { it <= ' ' }
-            mEvent!!.phoneNumber=phoneNumberTextInputLayout!!.editText!!.text.toString().trim { it <= ' ' }
-            mEvent!!.mail=mailTextInputLayout!!.editText!!.text.toString().trim { it <= ' ' }
+            mEvent!!.phoneNumber = binding.AddNewEventActivityTextInputLayoutPhoneNumber.editText!!.text.toString().trim { it <= ' ' }
+
         }
 
     private fun isRecurring(toString: String): Boolean {
@@ -505,7 +430,7 @@ class EditEventActivity : AppCompatActivity() {
         }
         if (!validateNotifications()) {
             Snackbar.make(
-                addNotificationTextView!!,
+                binding.AddNewEventActivityTextViewAddNotification,
                 "You cannot set a notification to the past.",
                 BaseTransientBottomBar.LENGTH_SHORT
             ).show()
@@ -516,12 +441,12 @@ class EditEventActivity : AppCompatActivity() {
 
     private fun validateEventTitle(): Boolean {
         val eventTitleString =
-            eventTitleTextInputLayout!!.editText!!.text.toString().trim { it <= ' ' }
+            binding.AddNewEventActivityTextInputLayoutEventTitle.editText!!.text.toString().trim { it <= ' ' }
         return if (eventTitleString.isEmpty()) {
-            eventTitleTextInputLayout!!.error = "Field can't be empty!"
+            binding.AddNewEventActivityTextInputLayoutEventTitle.error = "Field can't be empty!"
             false
         } else {
-            eventTitleTextInputLayout!!.error = null
+            binding.AddNewEventActivityTextInputLayoutEventTitle.error = null
             true
         }
     }
@@ -555,7 +480,7 @@ class EditEventActivity : AppCompatActivity() {
         AsyncTask<Void?, Void?, Void?>() {
         override fun onPreExecute() {
             super.onPreExecute()
-            progressBar!!.visibility = View.VISIBLE
+            binding.AddNewEventActivityProgressBar!!.visibility = View.VISIBLE
         }
 
 
@@ -613,19 +538,7 @@ class EditEventActivity : AppCompatActivity() {
             }
         }
 
-    //    @Override
-    //    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-    //        mLocationPermissionGranted = false;
-    //        switch (requestCode) {
-    //            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-    //                // If request is cancelled, the result arrays are empty.
-    //                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-    //                    mLocationPermissionGranted = true;
-    //                    startActivityForResult(new Intent(getApplicationContext(), MapsActivity.class), MAPS_ACTIVITY_REQUEST);
-    //                }
-    //            }
-    //        }
-    //    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == MAPS_ACTIVITY_REQUEST) {

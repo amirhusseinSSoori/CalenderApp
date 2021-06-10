@@ -11,7 +11,7 @@ import java.util.Locale;
 
 public class Utils {
 
-    public static final int MAX_CALENDAR_DAYS = 42;
+    public static final int MAX_CALENDAR_DAYS = 31;
 
     public static final String DAILY = "Repeat Daily";
     public static final String WEEKLY = "Repeat Weekly";
@@ -37,8 +37,10 @@ public class Utils {
     }
 
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH);
+
     public static final SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ENGLISH);
     public static final SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+    public static final SimpleDateFormat dayFormat = new SimpleDateFormat("dd", Locale.ENGLISH);
     public static final SimpleDateFormat eventDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 
     public static Date convertStringToDate(String date) {

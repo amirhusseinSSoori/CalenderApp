@@ -53,6 +53,8 @@ class GridAdapter(
         val viewYear = viewCalendar[Calendar.YEAR]
         val viewDayOfMonth = viewCalendar[Calendar.DAY_OF_MONTH]
         val viewDayOfWeek = viewCalendar[Calendar.DAY_OF_WEEK]
+
+
         val selectedMonth = selectedCalendar[Calendar.MONTH]
         val selectedYear = selectedCalendar[Calendar.YEAR]
         if (convertView == null) {
@@ -66,7 +68,12 @@ class GridAdapter(
         val dayTextView = convertView!!.findViewById<TextView>(R.id.LayoutCell_TextView_Day)
         val eventCountTextView =
             convertView.findViewById<TextView>(R.id.LayoutCell_TextView_EventCount)
+
+
         val bgLinearLayout = convertView.findViewById<LinearLayout>(R.id.LayoutCell_LinearLayout)
+
+
+
         if (viewYear == selectedYear && viewMonth == selectedMonth) {
             // Active dates
             convertView.setBackgroundColor(context.resources.getColor(colors[2]))
@@ -92,13 +99,17 @@ class GridAdapter(
         val recurringPatterns: List<RecurringPattern> = readRecurringPatterns()
         for (recurringPattern in recurringPatterns) {
             when (recurringPattern.pattern) {
+
                 DAILY -> eventIDs.add(recurringPattern.eventId!!)
+
                 WEEKLY -> if (viewDayOfWeek == recurringPattern.dayOfWeek) {
                     eventIDs.add(recurringPattern.eventId!!)
                 }
+
                 MONTHLY -> if (viewDayOfMonth == recurringPattern.dayOfMonth) {
                     eventIDs.add(recurringPattern.eventId!!)
                 }
+
                 YEARLY -> if (viewMonth == recurringPattern.monthOfYear && viewDayOfMonth == recurringPattern.dayOfMonth) {
                     eventIDs.add(recurringPattern.eventId!!)
                 }

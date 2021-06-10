@@ -106,7 +106,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(DBTables.EVENT_NOTE, event.getNote());
         contentValues.put(DBTables.EVENT_COLOR, event.getColor());
         contentValues.put(DBTables.EVENT_PHONE_NUMBER, event.getPhoneNumber());
-        contentValues.put(DBTables.EVENT_MAIL, event.getMail());
+      //  contentValues.put(DBTables.EVENT_MAIL, event.getMail());
         contentValues.put(DBTables.EVENT_PARENT_ID, -1);
 
         return (int) sqLiteDatabase.insert(DBTables.EVENT_TABLE_NAME, null, contentValues);
@@ -129,7 +129,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_NOTE, event.getNote());
         contentValues.put(DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_COLOR, event.getColor());
         contentValues.put(DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_PHONE_NUMBER, event.getPhoneNumber());
-        contentValues.put(DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_MAIL, event.getMail());
+       // contentValues.put(DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_MAIL, event.getMail());
 
         return (int) sqLiteDatabase.insert(DBTables.EVENT_INSTANCE_EXCEPTION_TABLE_NAME, null, contentValues);
 
@@ -169,7 +169,7 @@ public class DBHelper extends SQLiteOpenHelper {
             event.setNote(cursor.getString(cursor.getColumnIndex(DBTables.EVENT_NOTE)));
             event.setColor(cursor.getInt(cursor.getColumnIndex(DBTables.EVENT_COLOR)));
             event.setPhoneNumber(cursor.getString(cursor.getColumnIndex(DBTables.EVENT_PHONE_NUMBER)));
-            event.setMail(cursor.getString(cursor.getColumnIndex(DBTables.EVENT_MAIL)));
+           // event.setMail(cursor.getString(cursor.getColumnIndex(DBTables.EVENT_MAIL)));
         }
         return event;
     }
@@ -210,7 +210,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_NOTE,
                 DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_COLOR,
                 DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_PHONE_NUMBER,
-                DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_MAIL};
+              //  DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_MAIL
+                 };
 
         String where = DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_ID + "=?";
         String[] whereArgs = {Integer.toString(eventId)};
@@ -232,7 +233,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 DBTables.EVENT_NOTE,
                 DBTables.EVENT_COLOR,
                 DBTables.EVENT_PHONE_NUMBER,
-                DBTables.EVENT_MAIL,
+//                DBTables.EVENT_MAIL,
                 DBTables.EVENT_PARENT_ID};
         String where = DBTables.EVENT_ID + "=?";
         String[] whereArgs = {Integer.toString(eventId)};
@@ -357,7 +358,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_NOTE, event.getNote());
         contentValues.put(DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_COLOR, event.getColor());
         contentValues.put(DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_PHONE_NUMBER, event.getPhoneNumber());
-        contentValues.put(DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_MAIL, event.getMail());
+      //  contentValues.put(DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_EVENT_MAIL, event.getMail());
 
         String where = DBTables.EVENT_INSTANCE_EXCEPTION_EVENT_ID + "=?";
         String[] whereArgs = {Integer.toString(eventId)};
@@ -393,6 +394,9 @@ public class DBHelper extends SQLiteOpenHelper {
         String[] whereArgs = {Integer.toString(event.getId())};
         sqLiteDatabase.update(DBTables.RECURRING_PATTERN_TABLE_NAME, contentValues, where, whereArgs);
     }
+
+
+
 
     // Delete functions
     public void deleteNotificationsByEventId(SQLiteDatabase sqLiteDatabase, int eventId) {

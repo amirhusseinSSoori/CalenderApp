@@ -7,14 +7,15 @@ import android.content.Intent
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.template.calenderproject.ChangeCalender
 import com.template.calenderproject.NewEventActivity
 import com.template.calenderproject.R
 import com.template.calenderproject.Utils
@@ -25,6 +26,7 @@ import com.template.calenderproject.database.DBTables
 import com.template.calenderproject.databinding.FragmentCalendarBinding
 import com.template.calenderproject.model.Event
 import com.template.calenderproject.model.RecurringPattern
+import saman.zamani.persiandate.PersianDate
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -59,10 +61,12 @@ class CalendarFragment : Fragment(R.layout.fragment_calendar) {
             calendar.add(Calendar.MONTH, 1)
             setUpCalendar()
         }
+
         binding.CalenderFragmentButtonPrev!!.setOnClickListener {
             calendar.add(Calendar.MONTH, -1)
             setUpCalendar()
         }
+
         binding.CalenderFragmentGridViewDates!!.onItemClickListener =
             OnItemClickListener { parent, view, position, id -> // Avoid clicking on non-activate dates
                 val viewDate = dates[position]
@@ -126,8 +130,12 @@ class CalendarFragment : Fragment(R.layout.fragment_calendar) {
     }
 
     fun setUpCalendar() {
-        val dateString: String = Utils.dateFormat.format(calendar.time)
-        binding.CalenderFragmentTextViewCurrentDate!!.text = dateString
+        val dateString : String =ChangeCalender().changeToPersian(Utils.monthFormat.format(calendar.time))
+        val pdate = PersianDate(calendar.time)
+      //  pdate.setShDay(Utils.dayFormat.format(PersianDate(calendar.time)).toInt())
+        binding.CalenderFragmentTextViewCurrentDate!!.text = "$dateString"
+
+        Log.e("TAGM", "setUpCalendar: ${pdate.getShDay()} ")
         dates.clear()
         val monthCalendar = calendar.clone() as Calendar
         monthCalendar[Calendar.DAY_OF_MONTH] = 1 // start from Monday
@@ -143,7 +151,10 @@ class CalendarFragment : Fragment(R.layout.fragment_calendar) {
             monthCalendar.add(Calendar.DAY_OF_MONTH, 1)
         }
         val gridAdapter = GridAdapter(requireContext(), dates, calendar, events)
+
         binding.CalenderFragmentGridViewDates!!.adapter = gridAdapter
+
+
     }
 
     private fun collectEventsByMonth(year: String, month: String) {

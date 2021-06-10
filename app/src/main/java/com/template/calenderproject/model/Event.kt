@@ -14,8 +14,6 @@ data class Event(
     var recurringPeriod: String? = null,
     var note: String? = null,
     var color: Int? = null,
-    var location: String? = null,
     var phoneNumber: String? = null,
-    var mail: String? = null,
     var parentId: Int? = null,
 )
